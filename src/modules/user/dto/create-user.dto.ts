@@ -1,8 +1,7 @@
-import { IsString, IsInt, IsEmail, Min, Max, IsEmpty } from 'class-validator';
+import { IsString, IsInt, IsEmail, Min, Max } from 'class-validator';
 
 export class CreateUserDto {
   @IsString()
-  @IsEmpty({message: 'Please enter a valid name'})
   readonly name: string;
 
   @IsInt()
