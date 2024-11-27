@@ -1,7 +1,7 @@
 import { ConflictException, Injectable, NotFoundException } from "@nestjs/common";
 import { InjectModel } from "@nestjs/mongoose";
 import { Model } from "mongoose";
-import { AuthService } from "src/auth/auth.service";
+import { AuthHelper } from "src/common/helpers/auth.helper";
 import { User, UserDocument } from "src/schemas/user.schema";
 
 
@@ -11,7 +11,7 @@ import { User, UserDocument } from "src/schemas/user.schema";
 export class UserService {
     constructor(
         @InjectModel(User.name) private userModel: Model<UserDocument>,
-        private readonly authService: AuthService
+        private readonly authService: AuthHelper
     ) {}
 
     async createUser(name: string, password: string, email: string, age: number,): Promise<User> {
@@ -39,8 +39,8 @@ export class UserService {
         return user; 
     } 
 
-    async findByEmail(email: string): Promise<User> {
-        const user = await this.userModel.findOne({email: email}).exec();
+    async findByEmail(email: string): Promise<User | undefined> {
+        const user = await this.userModel.findOne({email}).exec();
         if(!user){
             throw new NotFoundException(`User ${email} does not exist`)
         }
