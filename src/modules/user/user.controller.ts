@@ -2,17 +2,17 @@ import { Body, Controller, Delete, Get, Param, Post, Put, UseFilters } from "@ne
 import { UserService } from "./user.service";
 import { User } from "src/schemas/user.schema";
 import { CreateUserDto } from "./dto/create-user.dto";
-import { UniqueEmailFilter } from "src/common/filters/unique-email.filter";
+import { MongoExceptionFilter } from "src/common/filters/error.filter";
 
 
 @Controller('users')
-@UseFilters(UniqueEmailFilter)
+@UseFilters(MongoExceptionFilter)
 export class UsersController {
     constructor(private readonly userService: UserService) {}
 
     @Post() 
-    async create(@Body() createUserDto: { name: string, age: number, email: string }): Promise<User> { 
-        return this.userService.createUser(createUserDto.name, createUserDto.age, createUserDto.email); 
+    async create(@Body() createUserDto: { name: string, password: string, email: string, age: number }): Promise<User> { 
+        return this.userService.createUser(createUserDto.name, createUserDto.password, createUserDto.email, createUserDto.age); 
     }
 
     @Get()
@@ -30,7 +30,7 @@ export class UsersController {
         @Param('id') id: string,
         @Body() updateUserDto: CreateUserDto
     ): Promise<User> {
-        return this.userService.updateUser(id, updateUserDto.name, updateUserDto.age, updateUserDto.email);
+        return this.userService.updateUser(id, updateUserDto.name, updateUserDto.password, updateUserDto.email, updateUserDto.age);
     }
 
     @Delete(':id')
