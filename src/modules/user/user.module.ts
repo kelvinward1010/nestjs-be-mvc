@@ -12,7 +12,9 @@ import { AuthModule } from '../auth/auth.module';
         forwardRef(() => AuthModule),
     ],
     controllers: [UsersController],
-    providers: [UserService],
+    providers: [
+        UserService,
+    ],
     exports: [UserService]
 })
 export class UserModule implements NestModule { 
