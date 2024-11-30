@@ -1,76 +1,75 @@
+## Knowledges more about NestJS
 
-## Description
+### 1. Modules
+##### Vai trò và Trách nhiệm:
+- Tổ chức ứng dụng: Modules giúp tổ chức mã nguồn thành các phần có thể quản lý được, mỗi phần đảm nhận một chức năng cụ thể.
 
-[Nest](https://github.com/nestjs/nest) framework TypeScript starter repository.
+- Cấu trúc cây: Modules có thể nhập các modules khác, tạo ra một cấu trúc cây rõ ràng cho ứng dụng.
 
-## Project setup
+##### Cách làm việc:
+- @Module Decorator: Được sử dụng để khai báo một module. Trong đó bạn xác định các controllers, providers và các module con.
+- imports, controllers, providers: Mỗi module có ba phần chính: imports để nhập các modules khác, controllers để khai báo các controllers, và providers để khai báo các providers.
+- Shared Modules: Các modules có thể chia sẻ providers thông qua việc nhập các shared modules.
 
-```bash
-$ npm install
+```typescript
+@Module({
+  imports: [SharedModule],
+  controllers: [AppController],
+  providers: [AppService],
+})
+export class AppModule {}
 ```
 
-## Compile and run the project
+### 2. Providers
+##### Vai trò và Trách nhiệm:
+- Xử lý logic kinh doanh: Providers chịu trách nhiệm xử lý các logic phức tạp, giao tiếp với cơ sở dữ liệu, và cung cấp các dịch vụ khác.
+- Dependency Injection: NestJS sử dụng cơ chế Dependency Injection để quản lý các providers, giúp chúng dễ dàng được tái sử dụng và quản lý.
 
-```bash
-# development
-$ npm run start
+##### Cách làm việc:
+- @Injectable Decorator: Được sử dụng để khai báo một class là provider.
+- Injection Scope: Providers có thể có phạm vi toàn cầu (singleton) hoặc được tạo ra mỗi khi có yêu cầu (transient).
 
-# watch mode
-$ npm run start:dev
+```typescript
+@Injectable()
+export class UsersService {
+  private users = [];
 
-# production mode
-$ npm run start:prod
+  findAll() {
+    return this.users;
+  }
+
+  create(user) {
+    this.users.push(user);
+  }
+}
 ```
+##### Chia sẻ dữ liệu:
+- Dependency Injection: Providers có thể sử dụng các providers khác thông qua Dependency Injection. Điều này cho phép các providers chia sẻ dữ liệu và dịch vụ với nhau.
 
-## Run tests
+### 3. Controllers
+##### Vai trò và Trách nhiệm:
+- Xử lý yêu cầu HTTP: Controllers chịu trách nhiệm nhận và xử lý các yêu cầu HTTP từ client.
+- Định tuyến: Controllers định tuyến các yêu cầu đến các phương thức cụ thể để xử lý.
 
-```bash
-# unit tests
-$ npm run test
+##### Cách làm việc:
+- @Controller Decorator: Được sử dụng để khai báo một class là controller.
+- Route Decorators: Các decorators như @Get, @Post, @Put, @Delete được sử dụng để ánh xạ các phương thức tới các routes cụ thể.
 
-# e2e tests
-$ npm run test:e2e
+```typescript
+@Controller('users')
+export class UsersController {
+  constructor(private readonly usersService: UsersService) {}
 
-# test coverage
-$ npm run test:cov
+  @Get()
+  findAll() {
+    return this.usersService.findAll();
+  }
+
+  @Post()
+  create(@Body() user) {
+    return this.usersService.create(user);
+  }
+}
 ```
-
-## Deployment
-
-When you're ready to deploy your NestJS application to production, there are some key steps you can take to ensure it runs as efficiently as possible. Check out the [deployment documentation](https://docs.nestjs.com/deployment) for more information.
-
-If you are looking for a cloud-based platform to deploy your NestJS application, check out [Mau](https://mau.nestjs.com), our official platform for deploying NestJS applications on AWS. Mau makes deployment straightforward and fast, requiring just a few simple steps:
-
-```bash
-$ npm install -g mau
-$ mau deploy
-```
-
-With Mau, you can deploy your application in just a few clicks, allowing you to focus on building features rather than managing infrastructure.
-
-## Resources
-
-Check out a few resources that may come in handy when working with NestJS:
-
-- Visit the [NestJS Documentation](https://docs.nestjs.com) to learn more about the framework.
-- For questions and support, please visit our [Discord channel](https://discord.gg/G7Qnnhy).
-- To dive deeper and get more hands-on experience, check out our official video [courses](https://courses.nestjs.com/).
-- Deploy your application to AWS with the help of [NestJS Mau](https://mau.nestjs.com) in just a few clicks.
-- Visualize your application graph and interact with the NestJS application in real-time using [NestJS Devtools](https://devtools.nestjs.com).
-- Need help with your project (part-time to full-time)? Check out our official [enterprise support](https://enterprise.nestjs.com).
-- To stay in the loop and get updates, follow us on [X](https://x.com/nestframework) and [LinkedIn](https://linkedin.com/company/nestjs).
-- Looking for a job, or have a job to offer? Check out our official [Jobs board](https://jobs.nestjs.com).
-
-## Support
-
-Nest is an MIT-licensed open source project. It can grow thanks to the sponsors and support by the amazing backers. If you'd like to join them, please [read more here](https://docs.nestjs.com/support).
-
-## Stay in touch
-
-- Author - [Kamil Myśliwiec](https://twitter.com/kammysliwiec)
-- Website - [https://nestjs.com](https://nestjs.com/)
-- Twitter - [@nestframework](https://twitter.com/nestframework)
-
-## License
-
-Nest is [MIT licensed](https://github.com/nestjs/nest/blob/master/LICENSE).
+##### Chia sẻ dữ liệu:
+- Sử dụng Providers: Controllers nhận dữ liệu từ các providers để xử lý các yêu cầu HTTP. Điều này giúp tách biệt logic điều khiển và logic kinh doanh, giúp mã nguồn dễ quản lý hơn.
