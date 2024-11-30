@@ -9,7 +9,6 @@ import { Request } from "express";
 export class RolesGuard implements CanActivate{
     constructor(private readonly jwtService: JwtService, private readonly reflector: Reflector){}
 
-
     async canActivate(context: ExecutionContext): Promise<boolean>  {
         const request = context.switchToHttp().getRequest();
         const token = this.extractTokenFromHeader(request);

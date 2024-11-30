@@ -1,4 +1,4 @@
-import { Body, Controller, Delete, Get, Param, Post, Put, UseFilters, UseGuards } from "@nestjs/common";
+import { Body, Controller, Delete, Get, Param, Post, Put, UseFilters, UseGuards, UseInterceptors } from "@nestjs/common";
 import { UserService } from "./user.service";
 import { User } from "src/schemas/user.schema";
 import { CreateUserDto } from "./dto/create-user.dto";
@@ -6,6 +6,7 @@ import { MongoExceptionFilter } from "src/common/filters/error.filter";
 import { createResponse } from "src/common/utils/response.util";
 import { ResponseDto } from "src/common/dto/response.dto";
 import { RolesGuard } from "src/common/guards/role.guard";
+import { BodyCheckInterceptor } from "src/common/interceptors/body-check.interceptor";
 
 
 @Controller('users')
@@ -15,6 +16,7 @@ export class UsersController {
     constructor(private readonly userService: UserService) {}
 
     @Post() 
+    @UseInterceptors(BodyCheckInterceptor)
     async create(@Body() createUserDto: { name: string, password: string, email: string, age: number }): Promise<ResponseDto<User>> { 
         const user = await this.userService.createUser(createUserDto.name, createUserDto.password, createUserDto.email, createUserDto.age);
         return createResponse(201, 'success', user); 
