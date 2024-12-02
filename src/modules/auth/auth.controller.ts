@@ -1,13 +1,21 @@
-import { Controller, Post, Body, UseGuards } from '@nestjs/common';
+import { Controller, Post, Body, UseInterceptors } from '@nestjs/common';
 import { AuthService } from './auth.service';
 import { LoginDto } from './dto/login.dto';
 import { createResponse } from 'src/common/utils/response.util';
-import { RolesGuard } from 'src/common/guards/role.guard';
+import { SignUpDto } from './dto/signup.dto';
+import { BodyCheckInterceptor } from 'src/common/interceptors/body-check.interceptor';
 
 @Controller('auth')
-@UseGuards(RolesGuard)
+@UseInterceptors(BodyCheckInterceptor)
 export class AuthController {
     constructor(private readonly authService: AuthService) { }
+
+    @Post('signup')
+    async signup(@Body() data: SignUpDto) {
+        console.log("---",data)
+        const user = await this.authService.register(data);
+        return createResponse(201, 'success', user); 
+    }
 
     @Post('login')
     async login(@Body() loginDto: LoginDto) {

@@ -5,6 +5,7 @@ import { User, UserSchema } from 'src/schemas/user.schema';
 import { UsersController } from './user.controller';
 import { LoggerMiddleware } from 'src/common/middleware/logger.middleware';
 import { AuthModule } from '../auth/auth.module';
+import { AuthValidatorService } from '../auth/auth-validator.service';
 
 @Module({
     imports: [
@@ -14,6 +15,7 @@ import { AuthModule } from '../auth/auth.module';
     controllers: [UsersController],
     providers: [
         UserService,
+        AuthValidatorService
     ],
     exports: [UserService]
 })

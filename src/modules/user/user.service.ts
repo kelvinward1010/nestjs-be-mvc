@@ -1,8 +1,10 @@
-import { ConflictException, Injectable, NotFoundException } from "@nestjs/common";
+import { ConflictException, Injectable, NotFoundException, Scope } from "@nestjs/common";
+import { ModuleRef } from "@nestjs/core";
 import { InjectModel } from "@nestjs/mongoose";
 import { Model } from "mongoose";
 import { AuthHelper } from "src/common/helpers/auth.helper";
 import { User, UserDocument } from "src/schemas/user.schema";
+import { AuthValidatorService } from "../auth/auth-validator.service";
 
 
 
@@ -11,11 +13,14 @@ import { User, UserDocument } from "src/schemas/user.schema";
 export class UserService {
     constructor(
         @InjectModel(User.name) private userModel: Model<UserDocument>,
-        private readonly authService: AuthHelper
+        private readonly authService: AuthHelper,
+        private readonly moduleRef: ModuleRef,
     ) {}
 
     async createUser(name: string, password: string, email: string, age: number,): Promise<User> {
-
+        const authValidator = await this.moduleRef.resolve(AuthValidatorService);
+        authValidator.validateCreationRequest({name,email, password, age})
+        
         const existingUser = await this.userModel.findOne({ email }); 
         if (existingUser) { 
             throw new ConflictException('Email already exists'); 

@@ -8,9 +8,13 @@ import { UserModule } from '../user/user.module';
 import { AuthService } from './auth.service';
 import { AuthHelper } from 'src/common/helpers/auth.helper';
 import { RolesGuard } from 'src/common/guards/role.guard';
+import { AuthValidatorService } from './auth-validator.service';
+import { MongooseModule } from '@nestjs/mongoose';
+import { User, UserSchema } from 'src/schemas/user.schema';
 
 @Module({
     imports: [
+        MongooseModule.forFeature([{ name: User.name, schema: UserSchema }]),
         forwardRef(() => UserModule),
         PassportModule,
         JwtModule.register({
@@ -23,7 +27,8 @@ import { RolesGuard } from 'src/common/guards/role.guard';
         AuthService, 
         JwtStrategy, 
         AuthHelper,
-        RolesGuard
+        RolesGuard,
+        AuthValidatorService
     ],
     exports: [AuthService, AuthHelper, JwtModule, RolesGuard]
 })
