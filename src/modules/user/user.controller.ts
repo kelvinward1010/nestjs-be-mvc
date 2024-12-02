@@ -15,7 +15,7 @@ import { BodyCheckInterceptor } from "src/common/interceptors/body-check.interce
 export class UsersController {
     constructor(private readonly userService: UserService) {}
 
-    @Post() 
+    @Post()
     @UseInterceptors(BodyCheckInterceptor)
     async create(@Body() createUserDto: { name: string, password: string, email: string, age: number }): Promise<ResponseDto<User>> { 
         const user = await this.userService.createUser(createUserDto.name, createUserDto.password, createUserDto.email, createUserDto.age);
