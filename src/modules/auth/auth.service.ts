@@ -35,10 +35,12 @@ export class AuthService implements OnModuleInit {
 
     async login(loginDto: LoginDto) {
         const user = await this.validateUser(loginDto.email, loginDto.password);
-        if (!user) {
+        if (!user._doc) {
             throw new UnauthorizedException('Invalid credentials');
         }
-        const payload = { username: user.username, sub: user.id };
+        const transferUser = user._doc;
+
+        const payload = { username: transferUser.name, sub: transferUser._id };
         return {
             access_token: this.jwtService.sign(payload),
         };
