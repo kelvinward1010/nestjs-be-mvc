@@ -12,7 +12,6 @@ export class AuthController {
 
     @Post('signup')
     async signup(@Body() data: SignUpDto) {
-        console.log("---",data)
         const user = await this.authService.register(data);
         return createResponse(201, 'success', user); 
     }
