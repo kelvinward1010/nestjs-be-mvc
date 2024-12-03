@@ -13,10 +13,28 @@ import { RolesAdminGuard } from "src/common/guards/role.guard.admin";
 @UseGuards(RolesAdminGuard)
 @UseInterceptors(BodyCheckInterceptor)
 export class PostsController {
-    constructor(private readonly postService: PostService) {}
+    constructor(
+        private readonly postService: PostService,
+        //private readonly cloudinaryService: CloudinaryService,
+    ) {}
 
     @Post()
-    async create(@Body() createPostDto: CreatePostDto): Promise<ResponseDto<IPost>> { 
+    //@UseInterceptors(FilesInterceptor('image', 10, multerConfig))
+    async create(
+        @Body() createPostDto: CreatePostDto,
+        //@UploadedFiles() files: Express.Multer.File[],
+    ): Promise<ResponseDto<IPost>> {
+        // if (!files || files.length === 0) { 
+        //     throw new BadRequestException('No file provided'); 
+        // } 
+        // const uploadResults = await Promise.all( 
+        //     files.map(file => this.cloudinaryService.uploadImage(file)) 
+        // );
+        // const imageUrls = uploadResults.map(result => result.secure_url);
+        // console.log(imageUrls)
+        // createProductDto.images = [
+        //   { url: result.secure_url, uri: result.public_id },
+        // ];
         const post = await this.postService.createPost(createPostDto);
         return createResponse(201, 'success', post); 
     }

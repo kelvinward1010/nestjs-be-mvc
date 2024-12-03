@@ -6,6 +6,8 @@ import { PostService } from "./post.service";
 import { LoggerMiddleware } from "src/common/middleware/logger.middleware";
 import { AuthModule } from "../auth/auth.module";
 import { CloudinaryService } from "src/cloud/cloudinary.providers";
+import { MulterModule } from "@nestjs/platform-express";
+import { multerConfig } from "src/config/multer.config";
 
 
 
@@ -13,6 +15,7 @@ import { CloudinaryService } from "src/cloud/cloudinary.providers";
     imports: [
         MongooseModule.forFeature([{ name: IPost.name, schema: PostSchema }]),
         AuthModule,
+        MulterModule.register(multerConfig)
     ],
     controllers: [
         PostsController

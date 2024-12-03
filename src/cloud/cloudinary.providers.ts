@@ -22,10 +22,3 @@ export class CloudinaryService {
         });
     }
 }
-
-export const CloudinaryProvider = {
-    provide: 'Cloudinary',
-    useFactory: () => {
-        return cloudinary;
-    },
-};

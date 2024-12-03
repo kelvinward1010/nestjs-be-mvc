@@ -6,4 +6,9 @@ cloudinary.config({
     api_secret: process.env.CLOUDINARY_API_SECRET,
 });
 
-export { cloudinary };
+export const CloudinaryProvider = {
+    provide: 'Cloudinary',
+    useFactory: () => {
+        return cloudinary;
+    },
+};

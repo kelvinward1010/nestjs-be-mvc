@@ -14,15 +14,13 @@ export class RolesAdminGuard implements CanActivate{
     async canActivate(context: ExecutionContext): Promise<boolean>  {
         const request = context.switchToHttp().getRequest();
         const token = this.extractTokenFromHeader(request);
-
-        const body = request.body;
         
         if (!token) { 
             throw new UnauthorizedException('Token not found'); 
         } 
         try {
             const payload = this.accessJwtService.verify(token, { secret: process.env.ACCESS_SECRET_KEY });
-            return payload.roles && payload.roles.includes('admin') && payload.sub === body.ownerId; 
+            return payload.roles && payload.roles.includes('admin'); 
         } catch (error) { 
             throw new UnauthorizedException('Invalid token'); 
         }
