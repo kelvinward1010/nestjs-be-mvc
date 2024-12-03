@@ -11,6 +11,7 @@ import { RolesGuard } from 'src/common/guards/role.guard';
 import { AuthValidatorService } from './auth-validator.service';
 import { MongooseModule } from '@nestjs/mongoose';
 import { User, UserSchema } from 'src/schemas/user.schema';
+import { AccessJwtProvider, RefreshJwtProvider } from 'src/config/jwt.config';
 
 @Module({
     imports: [
@@ -26,26 +27,8 @@ import { User, UserSchema } from 'src/schemas/user.schema';
         AuthHelper,
         RolesGuard,
         AuthValidatorService,
-        {
-            provide: 'AccessJwtService',
-            useFactory: (jwtService: JwtService) => {
-                return new JwtService({
-                    secret: process.env.ACCESS_SECRET_KEY,
-                    signOptions: { expiresIn: '60m' },
-                })
-            },
-            inject: [JwtService],
-        },
-        {
-            provide: 'RefreshJwtService',
-            useFactory: (jwtService: JwtService) => {
-                return new JwtService({
-                    secret: process.env.REFRESH_SECRET_KEY,
-                    signOptions: { expiresIn: '7d' },
-                })
-            },
-            inject: [JwtService],
-        }
+        AccessJwtProvider,
+        RefreshJwtProvider,
     ],
     exports: [AuthService, AuthHelper, JwtModule, RolesGuard, 'AccessJwtService', 'RefreshJwtService']
 })
