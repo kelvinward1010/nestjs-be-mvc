@@ -3,7 +3,7 @@ import { ModuleRef } from "@nestjs/core";
 import { InjectModel } from "@nestjs/mongoose";
 import { Model } from "mongoose";
 import { AuthHelper } from "src/common/helpers/auth.helper";
-import { User, UserDocument } from "src/schemas/user.schema";
+import { User, UserDocument, UserRole } from "src/schemas/user.schema";
 import { AuthValidatorService } from "../auth/auth-validator.service";
 
 
@@ -17,9 +17,9 @@ export class UserService {
         private readonly moduleRef: ModuleRef,
     ) {}
 
-    async createUser(name: string, password: string, email: string, age: number,): Promise<User> {
+    async createUser(name: string, password: string, email: string, age: number, role: UserRole): Promise<User> {
         const authValidator = await this.moduleRef.resolve(AuthValidatorService);
-        authValidator.validateCreationRequest({name,email, password, age})
+        authValidator.validateCreationRequest({name,email, password, age, role})
         
         const existingUser = await this.userModel.findOne({ email }); 
         if (existingUser) { 
@@ -27,7 +27,7 @@ export class UserService {
         }
 
         const hashedPassword = await this.authService.hashPassword(password);
-        const newUser = new this.userModel({ name, password: hashedPassword, email, age }); 
+        const newUser = new this.userModel({ name, password: hashedPassword, email, age, role }); 
         return newUser.save();
     }
 
@@ -53,8 +53,8 @@ export class UserService {
         return user; 
     }
     
-    async updateUser(id: string, name: string, password: string, email: string, age: number): Promise<User> { 
-        return this.userModel.findByIdAndUpdate(id, { name, password, email, age }, { new: true }).exec(); 
+    async updateUser(id: string, name: string, password: string, email: string, age: number, role: UserRole): Promise<User> { 
+        return this.userModel.findByIdAndUpdate(id, { name, password, email, age, role }, { new: true }).exec(); 
     } 
     
     async deleteUser(id: string): Promise<User> { 

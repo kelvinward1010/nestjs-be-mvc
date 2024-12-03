@@ -1,4 +1,4 @@
-import { ConflictException, Injectable, OnModuleInit, UnauthorizedException } from '@nestjs/common';
+import { ConflictException, Inject, Injectable, OnModuleInit, UnauthorizedException } from '@nestjs/common';
 import { LoginDto } from './dto/login.dto';
 import { JwtService } from '@nestjs/jwt';
 import { UserService } from '../user/user.service';
@@ -9,6 +9,7 @@ import { User, UserDocument } from 'src/schemas/user.schema';
 import { Model } from 'mongoose';
 import { AuthValidatorService } from './auth-validator.service';
 import { SignUpDto } from './dto/signup.dto';
+import { Request, Response } from 'express';
 
 @Injectable()
 export class AuthService implements OnModuleInit {
@@ -16,7 +17,8 @@ export class AuthService implements OnModuleInit {
         @InjectModel(User.name) private userModel: Model<UserDocument>,
         private authHelper: AuthHelper,
         private readonly userService: UserService,
-        private readonly jwtService: JwtService,
+        @Inject('AccessJwtService') private accessJwtService: JwtService, 
+        @Inject('RefreshJwtService') private refreshJwtService: JwtService,
         private readonly moduleRef: ModuleRef,
     ) { }
 
@@ -33,7 +35,7 @@ export class AuthService implements OnModuleInit {
         return null;
     }
 
-    async login(loginDto: LoginDto) {
+    async login(loginDto: LoginDto, res: Response) {
         const user = await this.validateUser(loginDto.email, loginDto.password);
         if (!user._doc) {
             throw new UnauthorizedException('Invalid credentials');
@@ -41,9 +43,17 @@ export class AuthService implements OnModuleInit {
         const transferUser = user._doc;
 
         const payload = { username: transferUser.name, sub: transferUser._id };
-        return {
-            access_token: this.jwtService.sign(payload),
-        };
+        const access_token = this.accessJwtService.sign(payload); 
+        const refresh_token = this.refreshJwtService.sign(payload);
+
+        res.cookie('refresh_token', refresh_token, {
+            httpOnly: true,
+            secure: process.env.NODE_ENV === 'production', // Chỉ gửi cookie qua HTTPS nếu môi trường là production
+            maxAge: 7 * 24 * 60 * 60 * 1000, // 7 days
+            sameSite: process.env.NODE_ENV === 'production' ? 'strict' : 'lax',
+        })
+
+        return {access_token, refresh_token};
     }
 
     async register(data: SignUpDto) {
@@ -58,5 +68,21 @@ export class AuthService implements OnModuleInit {
         const hashedPassword = await this.authHelper.hashPassword(data.password);
         const newUser = new this.userModel({ ...data, password: hashedPassword }); 
         return newUser.save();
+    }
+
+    async refreshToken(req: Request): Promise<any> {
+        const refreshToken = req.cookies['refresh_token'];
+        if(!refreshToken){
+            throw new UnauthorizedException('Refresh token not found');
+        }
+        
+        try {
+            const decoded = this.refreshJwtService.verify(refreshToken, { secret: process.env.REFRESH_SECRET_KEY });
+            const payload = { username: decoded.username, sub: decoded.sub};
+            const access_token = this.accessJwtService.sign(payload);
+            return { access_token }
+        }catch (err) {
+            throw new UnauthorizedException('Invalid refresh token');
+        }
     }
 }

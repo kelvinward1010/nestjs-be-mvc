@@ -1,4 +1,5 @@
-import { IsString, IsInt, IsEmail, IsNotEmpty } from 'class-validator';
+import { IsString, IsInt, IsEmail, IsNotEmpty, IsEnum } from 'class-validator';
+import { UserRole } from 'src/schemas/user.schema';
 
 export class SignUpDto {
   @IsString()
@@ -14,6 +15,8 @@ export class SignUpDto {
   readonly password: string;
 
   @IsInt()
-  @IsNotEmpty({message: 'Age is missing!'})
   readonly age: number;
+
+  @IsEnum(UserRole)
+  readonly role: UserRole;
 }

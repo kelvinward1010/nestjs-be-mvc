@@ -28,3 +28,53 @@ Khi bạn sử dụng các thư viện hoặc mã bên thứ ba không hỗ tr�
 
 5. Hiệu suất:
 Trong một số trường hợp đặc biệt, sử dụng DI có thể gây ra hiệu suất kém do quá trình khởi tạo phức tạp và quản lý vòng đời các đối tượng.
+
+
+
+### Trong NestJS (và các framework dựa trên TypeScript như Angular), @Inject là một decorator được sử dụng để tiêm (inject) các phụ thuộc vào một lớp. Đây là một phần của hệ thống Dependency Injection (DI) của NestJS, cho phép bạn dễ dàng quản lý và sử dụng các dịch vụ, lớp, hoặc giá trị trong suốt ứng dụng của mình mà không cần phải tự tay khởi tạo chúng.
+
+Lợi ích của Dependency Injection:
+- Quản lý phụ thuộc dễ dàng: Giúp quản lý các đối tượng phụ thuộc một cách hiệu quả và gọn gàng.
+- Dễ dàng kiểm thử: DI giúp việc kiểm thử trở nên dễ dàng hơn, vì bạn có thể tiêm các mô phỏng hoặc stub vào các lớp trong các bài kiểm tra.
+
+- Tăng tính linh hoạt: Cho phép thay thế các thành phần dễ dàng mà không cần thay đổi mã nguồn nhiều.
+
+Cách sử dụng @Inject:
+- Dưới đây là ví dụ cụ thể về cách sử dụng @Inject để tiêm các giá trị vào một dịch vụ:
+
+Ví dụ: Tiêm JwtService vào một dịch vụ
+Giả sử bạn muốn tiêm JwtService vào AuthService.
+
+auth.service.ts
+
+```typescript
+import { Injectable, Inject, OnModuleInit, UnauthorizedException } from '@nestjs/common';
+import { JwtService } from '@nestjs/jwt';
+import { UserService } from '../user/user.service';
+import { AuthHelper } from 'src/common/helpers/auth.helper';
+import { ModuleRef } from '@nestjs/core';
+import { InjectModel } from '@nestjs/mongoose';
+import { User, UserDocument } from 'src/schemas/user.schema';
+import { Model } from 'mongoose';
+import { AuthValidatorService } from './auth-validator.service';
+import { LoginDto } from './dto/login.dto';
+import { SignUpDto } from './dto/signup.dto';
+
+@Injectable()
+export class AuthService implements OnModuleInit {
+    constructor(
+        @InjectModel(User.name) private userModel: Model<UserDocument>,
+        private authHelper: AuthHelper,
+        private readonly userService: UserService,
+        @Inject('AccessJwtService') private accessJwtService: JwtService, // Tiêm AccessJwtService
+        @Inject('RefreshJwtService') private refreshJwtService: JwtService, // Tiêm RefreshJwtService
+        private readonly moduleRef: ModuleRef,
+    ) {}
+
+    onModuleInit(){
+        this.authHelper = this.moduleRef.get(AuthHelper, { strict: false });
+    }
+
+    // Các phương thức khác
+}
+```

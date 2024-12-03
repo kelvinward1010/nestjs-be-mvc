@@ -1,4 +1,5 @@
-import { IsString, IsInt, IsEmail, Min, Max, IsNotEmpty } from 'class-validator';
+import { IsString, IsInt, IsEmail, Min, Max, IsNotEmpty, IsEnum } from 'class-validator';
+import { UserRole } from 'src/schemas/user.schema';
 
 export class CreateUserDto {
   @IsString()
@@ -18,6 +19,8 @@ export class CreateUserDto {
   @IsInt()
   @Min(0)
   @Max(120)
-  @IsNotEmpty({message: 'Age is missing!'})
   readonly age: number;
+
+  @IsEnum(UserRole)
+  readonly role: UserRole;
 }

@@ -1,6 +1,6 @@
 import { Body, Controller, Delete, Get, Param, Post, Put, UseFilters, UseGuards, UseInterceptors } from "@nestjs/common";
 import { UserService } from "./user.service";
-import { User } from "src/schemas/user.schema";
+import { User, UserRole } from "src/schemas/user.schema";
 import { CreateUserDto } from "./dto/create-user.dto";
 import { MongoExceptionFilter } from "src/common/filters/error.filter";
 import { createResponse } from "src/common/utils/response.util";
@@ -17,8 +17,8 @@ export class UsersController {
 
     @Post()
     @UseInterceptors(BodyCheckInterceptor)
-    async create(@Body() createUserDto: { name: string, password: string, email: string, age: number }): Promise<ResponseDto<User>> { 
-        const user = await this.userService.createUser(createUserDto.name, createUserDto.password, createUserDto.email, createUserDto.age);
+    async create(@Body() createUserDto: { name: string, password: string, email: string, age: number, role: UserRole }): Promise<ResponseDto<User>> { 
+        const user = await this.userService.createUser(createUserDto.name, createUserDto.password, createUserDto.email, createUserDto.age, createUserDto.role);
         return createResponse(201, 'success', user); 
     }
 
@@ -39,7 +39,7 @@ export class UsersController {
         @Param('id') id: string,
         @Body() updateUserDto: CreateUserDto
     ): Promise<ResponseDto<User>> {
-        const userUpdate = await this.userService.updateUser(id, updateUserDto.name, updateUserDto.password, updateUserDto.email, updateUserDto.age);
+        const userUpdate = await this.userService.updateUser(id, updateUserDto.name, updateUserDto.password, updateUserDto.email, updateUserDto.age, updateUserDto.role);
         return createResponse(200, 'success', userUpdate);
     }
 
