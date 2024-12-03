@@ -5,9 +5,7 @@ import { PostsController } from "./post.controller";
 import { PostService } from "./post.service";
 import { LoggerMiddleware } from "src/common/middleware/logger.middleware";
 import { AuthModule } from "../auth/auth.module";
-
-
-
+import { CloudinaryService } from "src/cloud/cloudinary.providers";
 
 
 
@@ -16,9 +14,12 @@ import { AuthModule } from "../auth/auth.module";
         MongooseModule.forFeature([{ name: IPost.name, schema: PostSchema }]),
         AuthModule,
     ],
-    controllers: [PostsController],
+    controllers: [
+        PostsController
+    ],
     providers: [
-        PostService
+        PostService, 
+        CloudinaryService,
     ],
     exports: []
 })
