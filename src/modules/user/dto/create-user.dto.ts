@@ -22,5 +22,5 @@ export class CreateUserDto {
   readonly age: number;
 
   @IsEnum(UserRole)
-  readonly role: UserRole;
+  readonly roles: UserRole;
 }

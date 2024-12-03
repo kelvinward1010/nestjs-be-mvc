@@ -11,7 +11,7 @@ export class BodyCheckInterceptor implements NestInterceptor {
             throw new Error('Body is missing requiredField');
         }
         
-        body.age = 22
+        //body.age = 22
         
         console.log('Body:', body);
         return next.handle().pipe(

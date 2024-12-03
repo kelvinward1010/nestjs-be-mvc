@@ -42,7 +42,7 @@ export class AuthService implements OnModuleInit {
         }
         const transferUser = user._doc;
 
-        const payload = { username: transferUser.name, sub: transferUser._id };
+        const payload = { username: transferUser.name, sub: transferUser._id, roles: transferUser.roles };
         const access_token = this.accessJwtService.sign(payload); 
         const refresh_token = this.refreshJwtService.sign(payload);
 
@@ -78,7 +78,7 @@ export class AuthService implements OnModuleInit {
         
         try {
             const decoded = this.refreshJwtService.verify(refreshToken, { secret: process.env.REFRESH_SECRET_KEY });
-            const payload = { username: decoded.username, sub: decoded.sub};
+            const payload = { username: decoded.username, sub: decoded.sub, roles: decoded.roles};
             const access_token = this.accessJwtService.sign(payload);
             return { access_token }
         }catch (err) {

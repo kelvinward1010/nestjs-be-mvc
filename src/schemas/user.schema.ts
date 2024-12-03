@@ -23,7 +23,7 @@ export class User {
   age: number;
 
   @Prop({required: true, enum: UserRole, default: UserRole.USER})
-  role: UserRole;
+  roles: UserRole;
 }
 
 export const UserSchema = SchemaFactory.createForClass(User);

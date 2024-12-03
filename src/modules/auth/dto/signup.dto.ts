@@ -18,5 +18,5 @@ export class SignUpDto {
   readonly age: number;
 
   @IsEnum(UserRole)
-  readonly role: UserRole;
+  readonly roles: UserRole;
 }

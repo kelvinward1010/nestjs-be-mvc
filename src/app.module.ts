@@ -6,11 +6,13 @@ import { MongooseModule } from '@nestjs/mongoose';
 import { ConfigService } from '@nestjs/config';
 import { AppConfigModule } from './config/config.module';
 import { AuthModule } from './modules/auth/auth.module';
+import { PostModule } from './modules/post/post.module';
 
 @Module({
   imports: [
     AuthModule,
     UserModule,
+    PostModule,
     AppConfigModule,
     MongooseModule.forRootAsync({
       imports: [AppConfigModule],

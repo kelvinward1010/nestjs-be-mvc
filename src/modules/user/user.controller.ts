@@ -39,7 +39,7 @@ export class UsersController {
         @Param('id') id: string,
         @Body() updateUserDto: CreateUserDto
     ): Promise<ResponseDto<User>> {
-        const userUpdate = await this.userService.updateUser(id, updateUserDto.name, updateUserDto.password, updateUserDto.email, updateUserDto.age, updateUserDto.role);
+        const userUpdate = await this.userService.updateUser(id, updateUserDto.name, updateUserDto.password, updateUserDto.email, updateUserDto.age, updateUserDto.roles);
         return createResponse(200, 'success', userUpdate);
     }
 

@@ -12,7 +12,6 @@ export class RolesGuard implements CanActivate{
     async canActivate(context: ExecutionContext): Promise<boolean>  {
         const request = context.switchToHttp().getRequest();
         const token = this.extractTokenFromHeader(request);
-        console.log(`Token: ${token}`)
         if(!token) return false;
         return true;
     }

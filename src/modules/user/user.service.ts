@@ -17,9 +17,9 @@ export class UserService {
         private readonly moduleRef: ModuleRef,
     ) {}
 
-    async createUser(name: string, password: string, email: string, age: number, role: UserRole): Promise<User> {
+    async createUser(name: string, password: string, email: string, age: number, roles: UserRole): Promise<User> {
         const authValidator = await this.moduleRef.resolve(AuthValidatorService);
-        authValidator.validateCreationRequest({name,email, password, age, role})
+        authValidator.validateCreationRequest({name,email, password, age, roles})
         
         const existingUser = await this.userModel.findOne({ email }); 
         if (existingUser) { 
@@ -27,7 +27,7 @@ export class UserService {
         }
 
         const hashedPassword = await this.authService.hashPassword(password);
-        const newUser = new this.userModel({ name, password: hashedPassword, email, age, role }); 
+        const newUser = new this.userModel({ name, password: hashedPassword, email, age, roles }); 
         return newUser.save();
     }
 
