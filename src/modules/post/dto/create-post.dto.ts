@@ -10,9 +10,11 @@ export class CreatePostDto {
   @IsNotEmpty({message: 'Content is missing!'})
   readonly content: string;
 
-  @IsString()
-  @IsNotEmpty({message: 'Image is missing!'})
-  readonly image: string;
+  //@IsArray()
+  readonly images: {
+    url: string,
+    public_id: string,
+  }[];
 
   @IsString()
   @IsNotEmpty({message: 'ownerId is missing!'})

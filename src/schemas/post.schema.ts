@@ -12,7 +12,12 @@ export class IPost {
     content: string;
 
     @Prop({ required: true })
-    image: string;
+    images: [
+        {
+            url: string,
+            public_id: string,
+        }
+    ];
 
     @Prop({ required: true })
     ownerId: string;

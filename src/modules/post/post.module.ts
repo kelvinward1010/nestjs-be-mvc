@@ -8,6 +8,7 @@ import { AuthModule } from "../auth/auth.module";
 import { CloudinaryService } from "src/cloud/cloudinary.providers";
 import { MulterModule } from "@nestjs/platform-express";
 import { multerConfig } from "src/config/multer.config";
+import { CloudinaryProvider } from "src/cloud/cloudinary.config";
 
 
 
@@ -23,6 +24,7 @@ import { multerConfig } from "src/config/multer.config";
     providers: [
         PostService, 
         CloudinaryService,
+        CloudinaryProvider,
     ],
     exports: []
 })

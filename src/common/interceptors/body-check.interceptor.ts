@@ -6,14 +6,14 @@ import { Observable, tap } from "rxjs";
 export class BodyCheckInterceptor implements NestInterceptor {
     intercept(context: ExecutionContext, next: CallHandler): Observable<any> {
         const request = context.switchToHttp().getRequest();
-        const body = request.body;
+        const body = request;
+        
         if (!body) {
             throw new Error('Body is missing requiredField');
         }
         
         //body.age = 22
         
-        console.log('Body:', body);
         return next.handle().pipe(
             tap((data) => {
                 if (!data) { 

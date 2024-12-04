@@ -3,6 +3,7 @@ import { InjectModel } from "@nestjs/mongoose";
 import { Model } from "mongoose";
 import { IPost, PostDocument } from "src/schemas/post.schema";
 import { CreatePostDto } from "./dto/create-post.dto";
+import { CloudinaryService } from "src/cloud/cloudinary.providers";
 
 
 
@@ -10,6 +11,7 @@ import { CreatePostDto } from "./dto/create-post.dto";
 export class PostService {
     constructor(
         @InjectModel(IPost.name) private postModel: Model<PostDocument>,
+        private readonly cloudinaryService: CloudinaryService,
     ) {}
 
     async createPost(createPostDto: CreatePostDto): Promise<IPost> {
@@ -35,6 +37,10 @@ export class PostService {
     } 
     
     async deletePost(id: string): Promise<IPost> { 
-        return this.postModel.findByIdAndDelete(id).exec(); 
+        const data = await this.postModel.findByIdAndDelete(id)
+        data.images.forEach(async (image) => {
+            await this.cloudinaryService.deleteImageOnCloud(image.public_id)
+        })
+        return data;  
     }
 }

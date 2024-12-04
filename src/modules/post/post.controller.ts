@@ -1,4 +1,4 @@
-import { Body, Controller, Delete, Get, Param, Post, Put, UseGuards, UseInterceptors } from "@nestjs/common";
+import { BadRequestException, Body, Controller, Delete, Get, Param, Post, Put, UploadedFiles, UseGuards, UseInterceptors } from "@nestjs/common";
 import { PostService } from "./post.service";
 import { BodyCheckInterceptor } from "src/common/interceptors/body-check.interceptor";
 import { CreatePostDto } from "./dto/create-post.dto";
@@ -6,6 +6,9 @@ import { ResponseDto } from "src/common/dto/response.dto";
 import {IPost}  from "src/schemas/post.schema";
 import { createResponse } from "src/common/utils/response.util";
 import { RolesAdminGuard } from "src/common/guards/role.guard.admin";
+import { FilesInterceptor } from "@nestjs/platform-express";
+import { multerConfig } from "src/config/multer.config";
+import { UploadCloudInterceptor } from "src/common/interceptors/upload-cloud.interceptor";
 
 
 
@@ -15,26 +18,13 @@ import { RolesAdminGuard } from "src/common/guards/role.guard.admin";
 export class PostsController {
     constructor(
         private readonly postService: PostService,
-        //private readonly cloudinaryService: CloudinaryService,
     ) {}
 
     @Post()
-    //@UseInterceptors(FilesInterceptor('image', 10, multerConfig))
+    @UseInterceptors(FilesInterceptor('images', 10, multerConfig), UploadCloudInterceptor)
     async create(
         @Body() createPostDto: CreatePostDto,
-        //@UploadedFiles() files: Express.Multer.File[],
     ): Promise<ResponseDto<IPost>> {
-        // if (!files || files.length === 0) { 
-        //     throw new BadRequestException('No file provided'); 
-        // } 
-        // const uploadResults = await Promise.all( 
-        //     files.map(file => this.cloudinaryService.uploadImage(file)) 
-        // );
-        // const imageUrls = uploadResults.map(result => result.secure_url);
-        // console.log(imageUrls)
-        // createProductDto.images = [
-        //   { url: result.secure_url, uri: result.public_id },
-        // ];
         const post = await this.postService.createPost(createPostDto);
         return createResponse(201, 'success', post); 
     }
