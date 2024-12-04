@@ -1,4 +1,4 @@
-import { BadRequestException, Body, Controller, Delete, Get, Param, Post, Put, UploadedFiles, UseGuards, UseInterceptors } from "@nestjs/common";
+import { BadRequestException, Body, Controller, Delete, Get, Param, Patch, Post, Put, UploadedFiles, UseGuards, UseInterceptors } from "@nestjs/common";
 import { PostService } from "./post.service";
 import { BodyCheckInterceptor } from "src/common/interceptors/body-check.interceptor";
 import { CreatePostDto } from "./dto/create-post.dto";
@@ -9,6 +9,7 @@ import { RolesAdminGuard } from "src/common/guards/role.guard.admin";
 import { FilesInterceptor } from "@nestjs/platform-express";
 import { multerConfig } from "src/config/multer.config";
 import { UploadCloudInterceptor } from "src/common/interceptors/upload-cloud.interceptor";
+import { UpdatePostDto } from "./dto/update-post.dto";
 
 
 
@@ -41,10 +42,11 @@ export class PostsController {
         return createResponse(200, 'success', post);
     }
 
-    @Put(':id')
+    @Patch(':id')
+    @UseInterceptors(FilesInterceptor('newImages', 10, multerConfig), UploadCloudInterceptor)
     async update(
         @Param('id') id: string,
-        @Body() updatePostDto: CreatePostDto
+        @Body() updatePostDto: UpdatePostDto
     ): Promise<ResponseDto<IPost>> {
         const postUpdate = await this.postService.updatePost(id, updatePostDto);
         return createResponse(200, 'success', postUpdate);

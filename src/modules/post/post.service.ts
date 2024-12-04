@@ -4,6 +4,8 @@ import { Model } from "mongoose";
 import { IPost, PostDocument } from "src/schemas/post.schema";
 import { CreatePostDto } from "./dto/create-post.dto";
 import { CloudinaryService } from "src/cloud/cloudinary.providers";
+import { UpdatePostDto } from "./dto/update-post.dto";
+import { IImages } from "./types";
 
 
 
@@ -32,7 +34,23 @@ export class PostService {
         return post; 
     }
     
-    async updatePost(id: string,updatePost: CreatePostDto): Promise<IPost> { 
+    async updatePost(id: string,updatePost: UpdatePostDto): Promise<IPost> { 
+        const existingPost = await this.postModel.findById(id)
+        if(!existingPost){
+            throw new NotFoundException(`Post ${id} does not exist`)
+        }
+
+        const imagesKeep = updatePost.images ?? [];
+        const newImages = updatePost.newImages ?? [];
+
+        const imagesToDelete = existingPost.images.filter((img: any) => !imagesKeep.includes(img.public_id))
+        await Promise.all(imagesToDelete.map(img => this.cloudinaryService.deleteImageOnCloud(img.public_id)))
+
+        updatePost.images = [
+            ...existingPost.images.filter((img: any) => imagesKeep.length > 0 ? imagesKeep.includes(img.public_id) : !imagesKeep.includes(img.public_id)),
+            ...newImages,
+        ]
+
         return this.postModel.findByIdAndUpdate(id, updatePost, { new: true }).exec(); 
     } 
     
