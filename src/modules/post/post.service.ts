@@ -5,7 +5,6 @@ import { IPost, PostDocument } from "src/schemas/post.schema";
 import { CreatePostDto } from "./dto/create-post.dto";
 import { CloudinaryService } from "src/cloud/cloudinary.providers";
 import { UpdatePostDto } from "./dto/update-post.dto";
-import { IImages } from "./types";
 
 
 
@@ -15,6 +14,16 @@ export class PostService {
         @InjectModel(IPost.name) private postModel: Model<PostDocument>,
         private readonly cloudinaryService: CloudinaryService,
     ) {}
+
+    async searchPosts(query: string): Promise<IPost[]> { 
+        const posts = await this.postModel.find({ 
+            $or: [ 
+                { title: { $regex: query, $options: 'i' } }, 
+                { content: { $regex: query, $options: 'i' } }, 
+                { _id: query } 
+            ] }).exec(); 
+        return posts; 
+    }
 
     async createPost(createPostDto: CreatePostDto): Promise<IPost> {
         const newPost = new this.postModel(createPostDto); 

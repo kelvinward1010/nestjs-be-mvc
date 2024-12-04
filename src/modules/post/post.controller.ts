@@ -1,4 +1,4 @@
-import { BadRequestException, Body, Controller, Delete, Get, Param, Patch, Post, Put, UploadedFiles, UseGuards, UseInterceptors } from "@nestjs/common";
+import { Body, Controller, Delete, Get, Param, Patch, Post, Put, Query, UploadedFiles, UseGuards, UseInterceptors } from "@nestjs/common";
 import { PostService } from "./post.service";
 import { BodyCheckInterceptor } from "src/common/interceptors/body-check.interceptor";
 import { CreatePostDto } from "./dto/create-post.dto";
@@ -20,6 +20,11 @@ export class PostsController {
     constructor(
         private readonly postService: PostService,
     ) {}
+
+    @Get('search') async searchPosts(@Query('q') query: string): Promise<ResponseDto<IPost[]>> { 
+        const posts = await this.postService.searchPosts(query); 
+        return createResponse(200, 'success', posts); 
+    }
 
     @Post()
     @UseInterceptors(FilesInterceptor('images', 10, multerConfig), UploadCloudInterceptor)
