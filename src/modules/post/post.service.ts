@@ -6,7 +6,7 @@ import { CreatePostDto } from "./dto/create-post.dto";
 import { CloudinaryService } from "src/cloud/cloudinary.providers";
 import { UpdatePostDto } from "./dto/update-post.dto";
 
-
+// Trong Mongoose, exec() là một phương thức được sử dụng để thực thi các truy vấn MongoDB và trả về một Promise. Việc sử dụng exec() giúp bạn có thể dễ dàng sử dụng cú pháp async/await hoặc .then()/.catch() để xử lý kết quả của truy vấn.
 
 @Injectable()
 export class PostService {
@@ -20,7 +20,7 @@ export class PostService {
             $or: [ 
                 { title: { $regex: query, $options: 'i' } }, 
                 { content: { $regex: query, $options: 'i' } }, 
-                { _id: query } 
+                // { _id: query } 
             ] }).exec(); 
         return posts; 
     }

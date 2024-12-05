@@ -21,7 +21,7 @@ export class PostsController {
         private readonly postService: PostService,
     ) {}
 
-    @Get('search') async searchPosts(@Query('q') query: string): Promise<ResponseDto<IPost[]>> { 
+    @Get('search') async searchPosts(@Query('query') query?: string): Promise<ResponseDto<IPost[]>> { 
         const posts = await this.postService.searchPosts(query); 
         return createResponse(200, 'success', posts); 
     }
