@@ -21,6 +21,7 @@ export class MyService {
   }
 }
 ```
+- Scoped Providers: Không thể lấy các provider có scope (transient hoặc request-scoped) bằng phương thức get(). Sử dụng phương thức resolve() để thay thế.
 
 2. resolve
 - resolve<T>(typeOrToken: Type<T> | string | symbol, contextId?: ContextId, options?: { strict: boolean }): Promise<T>
@@ -41,6 +42,39 @@ export class MyRequestScopedService {
   }
 }
 ```
+- Unique Instances: Mỗi lần gọi resolve() sẽ tạo ra một instance khác nhau của provider. Để tạo ra một instance duy nhất giữa nhiều lần gọi resolve(), sử dụng ContextIdFactory để tạo context identifier.
+
+- Trong NestJS, khái niệm DI sub-tree (Dependency Injection sub-tree) đề cập đến một cây con của các phụ thuộc (dependencies) trong hệ thống DI (Dependency Injection). Nó giúp tổ chức và quản lý các providers và dependencies một cách hiệu quả và cách ly chúng khi cần thiết.
+
+DI Sub-tree trong NestJS:
+Cấu trúc của DI Sub-tree:
+- Context Identifier: Mỗi DI sub-tree có một identifier duy nhất, được sử dụng để phân biệt và quản lý các instance của providers và dependencies trong cây con này.
+- Scoped Providers: Các providers có scope như transient hoặc request-scoped sẽ nằm trong các DI sub-tree riêng biệt để đảm bảo rằng chúng được khởi tạo mới mỗi khi cần thiết.
+
+Cách tạo DI Sub-tree:
+- ContextIdFactory: Sử dụng ContextIdFactory để tạo một context identifier cho DI sub-tree.
+
+```typescript
+import { ContextIdFactory } from '@nestjs/core';
+
+@Injectable()
+export class CatsService implements OnModuleInit {
+  constructor(private moduleRef: ModuleRef) {}
+
+  async onModuleInit() {
+    const contextId = ContextIdFactory.create();
+    const transientServices = await Promise.all([
+      this.moduleRef.resolve(TransientService, contextId),
+      this.moduleRef.resolve(TransientService, contextId),
+    ]);
+    console.log(transientServices[0] === transientServices[1]); // true
+  }
+}
+```
+Ứng dụng thực tế:
+- Quản lý Providers trong Context Cụ Thể: Khi có nhu cầu quản lý các instance của providers trong một ngữ cảnh cụ thể (như một request hoặc session cụ thể), sử dụng ContextIdFactory để đảm bảo các instance được nhóm lại và tái sử dụng một cách hợp lý.
+
+- Multi-tenant Applications: Rất hữu ích trong các ứng dụng đa khách hàng (multi-tenant), nơi mỗi khách hàng có thể có các dữ liệu hoặc cấu hình riêng và cần được quản lý một cách độc lập.
 
 3. create
 - create<T>(type: Type<T>): Promise<T>
@@ -59,4 +93,13 @@ export class MyService {
     myProvider.doSomething();
   }
 }
+```
+
+
+4. Registering REQUEST Provider:
+- Đăng ký một đối tượng REQUEST tùy chỉnh cho DI sub-tree được tạo thủ công bằng cách sử dụng phương thức registerRequestByContextId() của ModuleRef.
+
+```typescript
+const contextId = ContextIdFactory.create();
+this.moduleRef.registerRequestByContextId(/* YOUR_REQUEST_OBJECT */, contextId);
 ```
