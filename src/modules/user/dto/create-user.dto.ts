@@ -11,14 +11,10 @@ export class CreateUserDto {
   readonly email: string;
 
   @IsString()
-  @Min(6)
-  @Max(50)
   @IsNotEmpty({message: 'Password is missing!'})
   readonly password: string;
 
   @IsInt()
-  @Min(0)
-  @Max(120)
   readonly age: number;
 
   @IsEnum(UserRole)

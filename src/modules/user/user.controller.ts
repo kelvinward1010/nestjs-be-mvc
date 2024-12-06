@@ -7,6 +7,8 @@ import { createResponse } from "src/common/utils/response.util";
 import { ResponseDto } from "src/common/dto/response.dto";
 import { RolesGuard } from "src/common/guards/role.guard";
 import { BodyCheckInterceptor } from "src/common/interceptors/body-check.interceptor";
+import { User as UserDecorator } from 'src/common/decorators/user.decorator';
+import { Auth } from "src/common/decorators/auth.decorator";
 
 
 @Controller('users')
@@ -16,13 +18,15 @@ export class UsersController {
     constructor(private readonly userService: UserService) {}
 
     @Post()
+    @Auth(UserRole.ADMIN)
     @UseInterceptors(BodyCheckInterceptor)
-    async create(@Body() createUserDto: { name: string, password: string, email: string, age: number, role: UserRole }): Promise<ResponseDto<User>> { 
-        const user = await this.userService.createUser(createUserDto.name, createUserDto.password, createUserDto.email, createUserDto.age, createUserDto.role);
+    async create(@Body() createUserDto: CreateUserDto, @UserDecorator('name') customName: string): Promise<ResponseDto<User>> { 
+        const user = await this.userService.createUser(customName, createUserDto.password, createUserDto.email, createUserDto.age, createUserDto.roles);
         return createResponse(201, 'success', user); 
     }
 
     @Get()
+    @Auth(UserRole.ADMIN)
     async findAll(): Promise<ResponseDto<User[]>> {
         const users = await this.userService.findAll();
         return createResponse(200, 'success', users);
@@ -34,6 +38,10 @@ export class UsersController {
         return createResponse(200, 'success', user);
     }
 
+    // @Get('firstname') async getFirstName(@UserDecorator('email') firstName: string): Promise<ResponseDto<string>> { 
+    //     return createResponse(200, 'success', `Hello, ${firstName}`);
+    // }
+
     @Put(':id')
     async update(
         @Param('id') id: string,
@@ -44,6 +52,7 @@ export class UsersController {
     }
 
     @Delete(':id')
+    @Auth(UserRole.ADMIN)
     async remove(@Param('id') id: string): Promise<ResponseDto<User>> { 
         const userDelete = await this.userService.deleteUser(id);
         return createResponse(200, 'success', userDelete);

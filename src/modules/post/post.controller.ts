@@ -10,6 +10,8 @@ import { FilesInterceptor } from "@nestjs/platform-express";
 import { multerConfig } from "src/config/multer.config";
 import { UploadCloudInterceptor } from "src/common/interceptors/upload-cloud.interceptor";
 import { UpdatePostDto } from "./dto/update-post.dto";
+import { Auth } from "src/common/decorators/auth.decorator";
+import { UserRole } from "src/schemas/user.schema";
 
 
 
@@ -27,6 +29,7 @@ export class PostsController {
     }
 
     @Post()
+    @Auth(UserRole.ADMIN)
     @UseInterceptors(FilesInterceptor('images', 10, multerConfig), UploadCloudInterceptor)
     async create(
         @Body() createPostDto: CreatePostDto,
@@ -48,6 +51,7 @@ export class PostsController {
     }
 
     @Patch(':id')
+    @Auth(UserRole.ADMIN)
     @UseInterceptors(FilesInterceptor('newImages', 10, multerConfig), UploadCloudInterceptor)
     async update(
         @Param('id') id: string,
@@ -58,6 +62,7 @@ export class PostsController {
     }
 
     @Delete(':id')
+    @Auth(UserRole.ADMIN)
     async remove(@Param('id') id: string): Promise<ResponseDto<IPost>> { 
         const postDelete = await this.postService.deletePost(id);
         return createResponse(200, 'success', postDelete);

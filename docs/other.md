@@ -78,3 +78,23 @@ export class AuthService implements OnModuleInit {
     // Các phương thức khác
 }
 ```
+
+
+- implements là một từ khóa trong TypeScript và JavaScript được sử dụng để chỉ ra rằng một lớp (class) thực thi một giao diện (interface). Khi một lớp implements một giao diện, lớp đó phải cài đặt tất cả các phương thức và thuộc tính được định nghĩa trong giao diện đó. Đây là một cách để đảm bảo rằng một lớp tuân theo một hợp đồng cụ thể, giúp duy trì tính nhất quán và độ chính xác trong mã nguồn.
+
+```typescript 
+interface Animal {
+  makeSound(): void;
+  move(): void;
+}
+
+class Dog implements Animal {
+  makeSound() {
+    console.log('Woof! Woof!');
+  }
+
+  move() {
+    console.log('Dog is running.');
+  }
+}
+```
