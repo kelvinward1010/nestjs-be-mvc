@@ -5,6 +5,7 @@ import { ConfigModule } from '@nestjs/config';
   imports: [
     ConfigModule.forRoot({
         isGlobal: true,
+        cache: true,
     })
   ],
   exports: [ConfigModule],
