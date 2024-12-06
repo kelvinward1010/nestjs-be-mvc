@@ -9,6 +9,8 @@ import { RolesGuard } from "src/common/guards/role.guard";
 import { BodyCheckInterceptor } from "src/common/interceptors/body-check.interceptor";
 import { User as UserDecorator } from 'src/common/decorators/user.decorator';
 import { Auth } from "src/common/decorators/auth.decorator";
+import { RolesUserGuard } from "src/common/guards/role.guard.user";
+import { UpdateUserDto } from "./dto/update-user.dto";
 
 
 @Controller('users')
@@ -33,6 +35,7 @@ export class UsersController {
     }
 
     @Get(':id')
+    @UseGuards(RolesUserGuard)
     async findOne(@Param('id') id: string): Promise<ResponseDto<User>> {
         const user = await this.userService.findOne(id);
         return createResponse(200, 'success', user);
@@ -43,11 +46,12 @@ export class UsersController {
     // }
 
     @Put(':id')
+    @UseGuards(RolesUserGuard)
     async update(
         @Param('id') id: string,
-        @Body() updateUserDto: CreateUserDto
+        @Body() updateUserDto: UpdateUserDto
     ): Promise<ResponseDto<User>> {
-        const userUpdate = await this.userService.updateUser(id, updateUserDto.name, updateUserDto.password, updateUserDto.email, updateUserDto.age, updateUserDto.roles);
+        const userUpdate = await this.userService.updateUser(id, updateUserDto.name, updateUserDto.email, updateUserDto.age, updateUserDto.roles);
         return createResponse(200, 'success', userUpdate);
     }
 

@@ -49,12 +49,15 @@ export class UserService {
         if(!user){
             throw new NotFoundException(`User ${email} does not exist`)
         }
-
         return user; 
     }
     
-    async updateUser(id: string, name: string, password: string, email: string, age: number, role: UserRole): Promise<User> { 
-        return this.userModel.findByIdAndUpdate(id, { name, password, email, age, role }, { new: true }).exec(); 
+    async updateUser(id: string, name: string, email: string, age: number, roles: UserRole): Promise<User> { 
+        const user = await this.userModel.findByIdAndUpdate(id, { name, email, age, roles }, { new: true }).exec();
+        if(!user){
+            throw new NotFoundException(`User ${email} does not exist`)
+        }
+        return user; 
     } 
     
     async deleteUser(id: string): Promise<User> { 
