@@ -44,13 +44,23 @@
             };
             request.send(JSON.stringify({ message }));
         });
-        
-        window.addEventListener('beforeunload', function() { 
+
+        function disconnectSSE() { 
           if (eventSource) { 
             eventSource.close(); 
             console.log("Connection to server closed."); 
+            const disconnectRequest = new XMLHttpRequest(); 
+            disconnectRequest.open('DELETE', 'http://localhost:9999/sse/disconnect', true); 
+            disconnectRequest.send(); 
           } 
-        });
+        }
+        window.addEventListener('unload', disconnectSSE);
+        // window.addEventListener('beforeunload', disconnectSSE);
+        // document.addEventListener('visibilitychange', function() { 
+        //   if (document.hidden) { 
+        //     disconnectSSE(); 
+        //   } 
+        // });
     </script>
 </body>
 

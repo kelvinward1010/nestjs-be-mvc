@@ -1,4 +1,4 @@
-import { Controller, Get, HttpCode, Post, Sse } from '@nestjs/common';
+import { Controller, Delete, Get, HttpCode, Post, Sse } from '@nestjs/common';
 import { Observable } from 'rxjs';
 import { SseService } from './sse.service';
 import { Message as MessageDecorator } from 'src/common/decorators/message.decorator';
@@ -24,5 +24,12 @@ export class SseController {
         console.log('Starting SSE stream'); 
         //this.sseService.establishConnection();
         return this.sseService.getEvents(); 
+    }
+
+    @Delete('disconnect') 
+    @HttpCode(200) 
+    disconnectEvents(): void { 
+        console.log('Disconnecting SSE stream'); 
+        this.sseService.disconnectStream(); 
     }
 }
