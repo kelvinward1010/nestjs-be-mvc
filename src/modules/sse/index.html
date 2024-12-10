@@ -44,6 +44,13 @@
             };
             request.send(JSON.stringify({ message }));
         });
+        
+        window.addEventListener('beforeunload', function() { 
+          if (eventSource) { 
+            eventSource.close(); 
+            console.log("Connection to server closed."); 
+          } 
+        });
     </script>
 </body>
 
