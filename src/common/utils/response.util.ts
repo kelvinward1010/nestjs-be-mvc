@@ -1,4 +1,4 @@
-export function createResponse<T>(status: number, message: string, data: T | null): { status: number, message: string, data: T | null } {
+export function createResponse<T>(status: number, message: string, data: T | null | any): { status: number, message: string, data: T | null | any } {
     return {
         status,
         message,

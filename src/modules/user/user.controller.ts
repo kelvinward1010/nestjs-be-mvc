@@ -11,6 +11,8 @@ import { User as UserDecorator } from 'src/common/decorators/user.decorator';
 import { Auth } from "src/common/decorators/auth.decorator";
 import { RolesUserGuard } from "src/common/guards/role.guard.user";
 import { UpdateUserDto } from "./dto/update-user.dto";
+import { ClassSerializerInterceptor } from "../../common/interceptors/class-serializer.interceptor";
+import { UserEntity } from "./entities/user.entity";
 
 
 @Controller('users')
@@ -36,7 +38,8 @@ export class UsersController {
 
     @Get(':id')
     @UseGuards(RolesUserGuard)
-    async findOne(@Param('id') id: string): Promise<ResponseDto<User>> {
+    @UseInterceptors(ClassSerializerInterceptor)
+    async findOne(@Param('id') id: string): Promise<ResponseDto<UserEntity>> {
         const user = await this.userService.findOne(id);
         return createResponse(200, 'success', user);
     }
