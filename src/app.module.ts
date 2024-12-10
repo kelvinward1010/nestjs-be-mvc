@@ -5,7 +5,6 @@ import { MongooseModule } from '@nestjs/mongoose';
 import { ConfigService } from '@nestjs/config';
 import { AppConfigModule } from './config/config.module';
 import { AuthLazyModule, LazyModuleWrapper, UsersLazyModule } from './lazy.module.wrapper';
-import { PostModule } from './modules/post/post.module';
 
 @Module({
   imports: [
@@ -22,6 +21,7 @@ import { PostModule } from './modules/post/post.module';
     //PostModule,
     AppConfigModule,
     LazyModuleWrapper.forRoot('./modules/post/post.module', 'PostModule'),
+    LazyModuleWrapper.forRoot('./modules/sse/sse.module', 'SseModule'),
   ],
   controllers: [AppController],
   providers: [AppService],
