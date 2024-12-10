@@ -9,22 +9,75 @@
 
 <body>
     <h1>Server-Sent Events (SSE) Test</h1>
+    <form id="messageForm">
+        <label for="messageInput">Enter your message:</label>
+        <input type="text" id="messageInput" name="message" required />
+        <button type="submit">Send</button>
+    </form>
     <div id="messages"></div>
     <script>
-        const eventSource = new EventSource('http://localhost:9999/sse/events');
-        const messagesDiv = document.getElementById('messages');
+        const eventSource = new EventSource('http://localhost:9999/sse/stream');
+        document.getElementById('messageForm').addEventListener('submit', function (e) {
+            e.preventDefault();
+            const message = document.getElementById('messageInput').value;
 
-        eventSource.onmessage = function (event) {
-            const newMessage = document.createElement('span');
-            newMessage.textContent = event.data;
-            messagesDiv.appendChild(newMessage);
-        };
+            const request = new XMLHttpRequest();
+            request.open('POST', 'http://localhost:9999/sse/events', true);
+            request.setRequestHeader('Content-Type', 'application/json');
+            request.onreadystatechange = function (e) {
+                e.preventDefault();
+                if (request.readyState === 4 && request.status === 200) {
+                    const messagesDiv = document.getElementById('messages');
+                    messagesDiv.innerHTML = '';
 
-        eventSource.onerror = function (error) {
-            console.error('Error:', error);
-            eventSource.close();
-        };
+                    eventSource.onmessage = function (event) {
+                        const newMessage = document.createElement('span');
+                        newMessage.textContent = event.data;
+                        messagesDiv.appendChild(newMessage);
+                    };
+
+                    eventSource.onerror = function (error) {
+                        console.error('Error:', error);
+                        eventSource.close();
+                    };
+                }
+            };
+            request.send(JSON.stringify({ message }));
+        });
     </script>
 </body>
 
 </html>
+
+
+
+
+
+
+<!-- <!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>SSE Test</title>
+</head>
+<body>
+  <h1>Server-Sent Events (SSE) Test</h1>
+  <div id="messages"></div>
+  <script>
+    const eventSource = new EventSource('http://localhost:3000/sse/events');
+    const messagesDiv = document.getElementById('messages');
+
+    eventSource.onmessage = function(event) {
+      const newMessage = document.createElement('span');
+      newMessage.textContent = event.data;
+      messagesDiv.appendChild(newMessage);
+    };
+
+    eventSource.onerror = function(error) {
+      console.error('Error:', error);
+      eventSource.close();
+    };
+  </script>
+</body>
+</html> -->
