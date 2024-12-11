@@ -5,6 +5,7 @@ import { MongooseModule } from '@nestjs/mongoose';
 import { ConfigService } from '@nestjs/config';
 import { AppConfigModule } from './config/config.module';
 import { AuthLazyModule, LazyModuleWrapper, UsersLazyModule } from './lazy.module.wrapper';
+import { TasksScheduleModule } from './modules/task-schedule/task-schedule.module';
 
 @Module({
   imports: [
@@ -20,6 +21,7 @@ import { AuthLazyModule, LazyModuleWrapper, UsersLazyModule } from './lazy.modul
     UsersLazyModule,
     //PostModule,
     AppConfigModule,
+    //TasksScheduleModule,
     LazyModuleWrapper.forRoot('./modules/post/post.module', 'PostModule'),
     LazyModuleWrapper.forRoot('./modules/sse/sse.module', 'SseModule'),
   ],
