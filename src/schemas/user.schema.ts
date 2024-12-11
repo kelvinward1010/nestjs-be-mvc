@@ -24,6 +24,9 @@ export class User {
 
   @Prop({required: true, enum: UserRole, default: UserRole.USER})
   roles: UserRole;
+
+  @Prop({required: false})
+  avatar: string;
 }
 
 export const UserSchema = SchemaFactory.createForClass(User);

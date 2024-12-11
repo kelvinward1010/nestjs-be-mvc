@@ -1,10 +1,18 @@
 import { Exclude, Expose, Transform } from 'class-transformer';
+import { Types } from 'mongoose';
 import { UserRole } from 'src/schemas/user.schema';
 
 export class UserEntity {
-  id: number;
+  @Expose()
+  _id: Types.ObjectId;
+
+  @Expose()
   name: string;
+
+  @Expose()
   email: string;
+
+  @Expose()
   age: number;
 
   @Exclude()
@@ -15,7 +23,8 @@ export class UserEntity {
     return `${this.name}`;
   }
 
-  @Transform(({ value }) => value)
+  @Expose()
+  @Transform(({ value }) => value + ' ok')
   roles: UserRole;
 
   constructor(partial: Partial<UserEntity>) {

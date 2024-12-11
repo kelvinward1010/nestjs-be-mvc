@@ -19,4 +19,6 @@ export class CreateUserDto {
 
   @IsEnum(UserRole)
   readonly roles: UserRole;
+
+  readonly avatar?: string;
 }

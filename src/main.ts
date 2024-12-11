@@ -3,6 +3,7 @@ import { AppModule } from './app.module';
 import { ValidationPipe } from '@nestjs/common';
 import * as dotenv from 'dotenv';
 import * as cookieParser from 'cookie-parser';
+import * as compression from 'compression';
 import { HttpExceptionFilter } from './common/filters/http-exception.filter';
 
 dotenv.config();
@@ -23,6 +24,16 @@ async function bootstrap() {
     allowedHeaders: '*', // Cho phép tất cả các headers (allowedHeaders: '*').
     credentials: true, // Cho phép gửi thông tin xác thực (cookies) cùng với các yêu cầu (credentials: true).
   });
+
+  app.use(
+    compression({
+      level: 6,
+      threshold: 1024,
+      filter: (req, res) => {
+        return req.headers['x-no-compression'] ? false : compression.filter(req,res)
+      }
+    })
+  )
   
   await app.listen(port);
   console.log(`Application is running on: http://localhost:${port}`);

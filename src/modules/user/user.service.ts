@@ -5,6 +5,7 @@ import { Model } from "mongoose";
 import { AuthHelper } from "src/common/helpers/auth.helper";
 import { User, UserDocument, UserRole } from "src/schemas/user.schema";
 import { AuthValidatorService } from "../auth/auth-validator.service";
+import { UserEntity } from "./entities/user.entity";
 
 
 
@@ -17,7 +18,7 @@ export class UserService {
         private readonly moduleRef: ModuleRef,
     ) {}
 
-    async createUser(name: string, password: string, email: string, age: number, roles: UserRole): Promise<User> {
+    async createUser(name: string, password: string, email: string, age: number, roles: UserRole, avatar?: string): Promise<User> {
         const authValidator = await this.moduleRef.resolve(AuthValidatorService);
         authValidator.validateCreationRequest({name,email, password, age, roles})
         
@@ -27,7 +28,7 @@ export class UserService {
         }
 
         const hashedPassword = await this.authService.hashPassword(password);
-        const newUser = new this.userModel({ name, password: hashedPassword, email, age, roles }); 
+        const newUser = new this.userModel({ name, password: hashedPassword, email, age, roles, avatar }); 
         return newUser.save();
     }
 
@@ -35,13 +36,12 @@ export class UserService {
         return this.userModel.find().exec(); 
     }
 
-    async findOne(id: string): Promise<User> { 
+    async findOne(id: string): Promise<UserEntity> { 
         const user = await this.userModel.findById(id).exec();
         if(!user){
             throw new NotFoundException(`User ${id} does not exist`)
         }
-
-        return user; 
+        return new UserEntity(user.toObject()); 
     } 
 
     async findByEmail(email: string): Promise<User | undefined> {
@@ -52,8 +52,8 @@ export class UserService {
         return user; 
     }
     
-    async updateUser(id: string, name: string, email: string, age: number, roles: UserRole): Promise<User> { 
-        const user = await this.userModel.findByIdAndUpdate(id, { name, email, age, roles }, { new: true }).exec();
+    async updateUser(id: string, name: string, email: string, age: number, roles: UserRole, avatar?: string): Promise<User> { 
+        const user = await this.userModel.findByIdAndUpdate(id, { name, email, age, roles, avatar }, { new: true }).exec();
         if(!user){
             throw new NotFoundException(`User ${email} does not exist`)
         }

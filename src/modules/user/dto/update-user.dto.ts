@@ -15,4 +15,6 @@ export class UpdateUserDto {
 
   @IsEnum(UserRole)
   readonly roles: UserRole;
+
+  readonly avatar?: string;
 }

@@ -1,4 +1,4 @@
-import { IsString, IsInt, IsEmail, IsNotEmpty, IsEnum } from 'class-validator';
+import { IsString, IsInt, IsEmail, IsNotEmpty, IsEnum, IsBase64 } from 'class-validator';
 import { UserRole } from 'src/schemas/user.schema';
 
 export class SignUpDto {
@@ -19,4 +19,6 @@ export class SignUpDto {
 
   @IsEnum(UserRole)
   readonly roles: UserRole;
+
+  readonly avatar?: string;
 }

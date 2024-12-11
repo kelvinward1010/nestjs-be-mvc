@@ -1,4 +1,4 @@
-import { Body, Controller, Delete, Get, Param, Post, Put, UseFilters, UseGuards, UseInterceptors } from "@nestjs/common";
+import { Body, Controller, Delete, Get, Param, Post, Put, SerializeOptions, UseFilters, UseGuards, UseInterceptors } from "@nestjs/common";
 import { UserService } from "./user.service";
 import { User, UserRole } from "src/schemas/user.schema";
 import { CreateUserDto } from "./dto/create-user.dto";
@@ -13,6 +13,7 @@ import { RolesUserGuard } from "src/common/guards/role.guard.user";
 import { UpdateUserDto } from "./dto/update-user.dto";
 import { ClassSerializerInterceptor } from "../../common/interceptors/class-serializer.interceptor";
 import { UserEntity } from "./entities/user.entity";
+import { Base64ImagesInterceptor } from "src/common/interceptors/base64-images.interceptor";
 
 
 @Controller('users')
@@ -23,9 +24,9 @@ export class UsersController {
 
     @Post()
     @Auth(UserRole.ADMIN)
-    @UseInterceptors(BodyCheckInterceptor)
+    @UseInterceptors(BodyCheckInterceptor, Base64ImagesInterceptor)
     async create(@Body() createUserDto: CreateUserDto, @UserDecorator('name') customName: string): Promise<ResponseDto<User>> { 
-        const user = await this.userService.createUser(customName, createUserDto.password, createUserDto.email, createUserDto.age, createUserDto.roles);
+        const user = await this.userService.createUser(customName, createUserDto.password, createUserDto.email, createUserDto.age, createUserDto.roles, createUserDto.avatar);
         return createResponse(201, 'success', user); 
     }
 
@@ -39,6 +40,7 @@ export class UsersController {
     @Get(':id')
     @UseGuards(RolesUserGuard)
     @UseInterceptors(ClassSerializerInterceptor)
+    @SerializeOptions({ type: UserEntity }) 
     async findOne(@Param('id') id: string): Promise<ResponseDto<UserEntity>> {
         const user = await this.userService.findOne(id);
         return createResponse(200, 'success', user);
@@ -54,7 +56,7 @@ export class UsersController {
         @Param('id') id: string,
         @Body() updateUserDto: UpdateUserDto
     ): Promise<ResponseDto<User>> {
-        const userUpdate = await this.userService.updateUser(id, updateUserDto.name, updateUserDto.email, updateUserDto.age, updateUserDto.roles);
+        const userUpdate = await this.userService.updateUser(id, updateUserDto.name, updateUserDto.email, updateUserDto.age, updateUserDto.roles, updateUserDto.avatar);
         return createResponse(200, 'success', userUpdate);
     }
 

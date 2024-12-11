@@ -5,6 +5,7 @@ import { createResponse } from 'src/common/utils/response.util';
 import { SignUpDto } from './dto/signup.dto';
 import { BodyCheckInterceptor } from 'src/common/interceptors/body-check.interceptor';
 import { Request, Response } from 'express';
+import { Base64ImagesInterceptor } from 'src/common/interceptors/base64-images.interceptor';
 
 @Controller('auth')
 @UseInterceptors(BodyCheckInterceptor)
@@ -12,6 +13,7 @@ export class AuthController {
     constructor(private readonly authService: AuthService) { }
 
     @Post('signup')
+    @UseInterceptors(Base64ImagesInterceptor)
     async signup(@Body() data: SignUpDto) {
         const user = await this.authService.register(data);
         return createResponse(201, 'success', user); 
