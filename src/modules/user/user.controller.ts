@@ -5,7 +5,6 @@ import { CreateUserDto } from "./dto/create-user.dto";
 import { MongoExceptionFilter } from "src/common/filters/error.filter";
 import { createResponse } from "src/common/utils/response.util";
 import { ResponseDto } from "src/common/dto/response.dto";
-import { RolesGuard } from "src/common/guards/role.guard";
 import { BodyCheckInterceptor } from "src/common/interceptors/body-check.interceptor";
 import { User as UserDecorator } from 'src/common/decorators/user.decorator';
 import { Auth } from "src/common/decorators/auth.decorator";
@@ -18,7 +17,6 @@ import { Base64ImagesInterceptor } from "src/common/interceptors/base64-images.i
 
 @Controller('users')
 @UseFilters(MongoExceptionFilter)
-@UseGuards(RolesGuard)
 export class UsersController {
     constructor(private readonly userService: UserService) {}
 

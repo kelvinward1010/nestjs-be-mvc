@@ -5,7 +5,7 @@ import { Request } from "express";
 
 
 @Injectable()
-export class RolesGuard implements CanActivate{
+export class RoleGuard implements CanActivate{
     constructor(private readonly reflector: Reflector){}
 
     async canActivate(context: ExecutionContext): Promise<boolean>  {

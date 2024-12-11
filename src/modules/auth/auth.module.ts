@@ -7,11 +7,13 @@ import { LoggerMiddleware } from 'src/common/middleware/logger.middleware';
 import { UserModule } from '../user/user.module';
 import { AuthService } from './auth.service';
 import { AuthHelper } from 'src/common/helpers/auth.helper';
-import { RolesGuard } from 'src/common/guards/role.guard';
+import { RoleGuard } from 'src/common/guards/role.guard';
 import { AuthValidatorService } from './auth-validator.service';
 import { MongooseModule } from '@nestjs/mongoose';
 import { User, UserSchema } from 'src/schemas/user.schema';
 import { AccessJwtProvider, RefreshJwtProvider } from 'src/config/jwt.config';
+import { AuthGuard } from 'src/common/guards/auth.guard';
+import { RolesGuard } from 'src/common/guards/roles.guard';
 
 @Module({
     imports: [
@@ -25,12 +27,14 @@ import { AccessJwtProvider, RefreshJwtProvider } from 'src/config/jwt.config';
         AuthService, 
         JwtStrategy, 
         AuthHelper,
+        RoleGuard,
+        AuthGuard,
         RolesGuard,
         AuthValidatorService,
         AccessJwtProvider,
         RefreshJwtProvider,
     ],
-    exports: [AuthService, AuthHelper, JwtModule, RolesGuard, 'AccessJwtService', 'RefreshJwtService']
+    exports: [AuthService, AuthHelper, JwtModule, RoleGuard, 'AccessJwtService', 'RefreshJwtService']
 })
 export class AuthModule implements NestModule { 
     configure(consumer: MiddlewareConsumer) {
