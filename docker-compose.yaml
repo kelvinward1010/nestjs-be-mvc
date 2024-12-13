@@ -8,6 +8,8 @@ services:
     image: nestjs_be
     ports:
       - "5050:9999"
+    # env_file:
+    #   - ./.env
     volumes:
       - ./.env:/src/.env
     environment:
