@@ -1,0 +1,32 @@
+version: "3.8"
+
+services:
+  nestjs_be:
+    build: ./
+    restart: unless-stopped
+    container_name: nestjs_be
+    image: nestjs_be
+    ports:
+      - "5050:9999"
+    volumes:
+      - ./.env:/src/.env
+    environment:
+      - PORT=${PORT}
+      - URL_DB=${URL_DB}
+      - ACCESS_SECRET_KEY=${ACCESS_SECRET_KEY}
+      - REFRESH_SECRET_KEY=${REFRESH_SECRET_KEY}
+      - NODE_ENV=${NODE_ENV}
+      - CLOUDINARY_CLOUD_NAME=${CLOUDINARY_CLOUD_NAME}
+      - CLOUDINARY_API_KEY=${CLOUDINARY_API_KEY}
+      - CLOUDINARY_API_SECRET=${CLOUDINARY_API_SECRET}
+
+  mongo:
+    image: mongo
+    ports:
+      - "27017:27017"
+    volumes:
+      - ./data/test:/data/db
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: kelvinward1010
+      MONGO_INITDB_ROOT_PASSWORD: kelvinward1010
+    command: ["mongod", "--bind_ip", "0.0.0.0"]
