@@ -23,6 +23,8 @@ services:
       - CLOUDINARY_API_SECRET=${CLOUDINARY_API_SECRET}
     depends_on:
       - mongo
+    networks:
+      - nestworkout
 
   mongo:
     image: mongo
@@ -34,3 +36,9 @@ services:
       MONGO_INITDB_ROOT_USERNAME: kelvinward1010
       MONGO_INITDB_ROOT_PASSWORD: kelvinward1010
     command: ["mongod", "--bind_ip", "0.0.0.0"]
+    networks:
+      - nestworkout
+
+networks:
+  nestworkout:
+    driver: bridge # Giao tiếp giữa các network
