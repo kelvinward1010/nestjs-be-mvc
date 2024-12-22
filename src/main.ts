@@ -12,6 +12,7 @@ async function bootstrap() {
   const app = await NestFactory.create(AppModule); // Sử dụng NestFactory để tạo một instance của ứng dụng NestJS dựa trên AppModule.
   
   //app.use(new MockUserMiddleware().use)
+  
   app.useGlobalPipes(new ValidationPipe());
   app.useGlobalFilters(new HttpExceptionFilter());
   app.use(cookieParser())
